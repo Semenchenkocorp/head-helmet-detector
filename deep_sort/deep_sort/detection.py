@@ -4,46 +4,33 @@ import numpy as np
 
 class Detection(object):
     """
-    This class represents a bounding box detection in a single image.
-
-    Parameters
-    ----------
-    tlwh : array_like
-        Bounding box in format `(x, y, w, h)`.
-    confidence : float
-        Detector confidence score.
-    feature : array_like
-        A feature vector that describes the object contained in this image.
-
-    Attributes
-    ----------
-    tlwh : ndarray
-        Bounding box in format `(top left x, top left y, width, height)`.
-    confidence : ndarray
-        Detector confidence score.
-    feature : ndarray | NoneType
-        A feature vector that describes the object contained in this image.
-
+    Класс работа с bounding box для задачи детекции
+    box_coord - координаты коробки в формате (x,y,w,h)
+    где x,y - координаты верхнего левого угла
+    w,h - ширина и высота коробки
     """
 
-    def __init__(self, tlwh, confidence, feature):
-        self.tlwh = np.asarray(tlwh, dtype=np.float32)
+    def __init__(self, box_coord, confidence, feature):
+        self.box_coord = np.asarray(box_coord, dtype=np.float32)
         self.confidence = float(confidence)
         self.feature = np.asarray(feature, dtype=np.float32)
 
     def to_tlbr(self):
-        """Convert bounding box to format `(min x, min y, max x, max y)`, i.e.,
-        `(top left, bottom right)`.
         """
-        ret = self.tlwh.copy()
-        ret[2:] += ret[:2]
-        return ret
+        у нас подается бокс форматом (x,y,w,h) где x,y - координаты левого верхнего угла
+        соответственно в этой функции мы получаем правый нижний угол
+        """
+        temp = self.box_coord.copy()
+        temp[2:] += temp[:2]
+        return temp
 
     def to_xyah(self):
-        """Convert bounding box to format `(center x, center y, aspect ratio,
-        height)`, where the aspect ratio is `width / height`.
         """
-        ret = self.tlwh.copy()
-        ret[:2] += ret[2:] / 2
-        ret[2] /= ret[3]
-        return ret
+        бокс формата (x,y,w,h) преоборазовывается в формат
+        (x_center, y_center, a, h)
+        Где a это соотнощение ширины и длины
+        """
+        temp = self.box_coord.copy()
+        temp[:2] += temp[2:] / 2
+        temp[2] /= temp[3]
+        return temp
