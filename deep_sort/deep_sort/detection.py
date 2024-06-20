@@ -10,27 +10,24 @@ class Detection(object):
     w,h - ширина и высота коробки
     """
 
-    def __init__(self, box_coord, confidence, feature):
-        self.box_coord = np.asarray(box_coord, dtype=np.float32)
+    def __init__(self, tlwh, confidence, feature):
+        self.tlwh = np.asarray(tlwh, dtype=np.float32)
         self.confidence = float(confidence)
         self.feature = np.asarray(feature, dtype=np.float32)
 
     def to_tlbr(self):
+        """Convert bounding box to format `(min x, min y, max x, max y)`, i.e.,
+        `(top left, bottom right)`.
         """
-        у нас подается бокс форматом (x,y,w,h) где x,y - координаты левого верхнего угла
-        соответственно в этой функции мы получаем правый нижний угол
-        """
-        temp = self.box_coord.copy()
+        temp = self.tlwh.copy()
         temp[2:] += temp[:2]
         return temp
-
+    
     def to_xyah(self):
+        """Convert bounding box to format `(center x, center y, aspect ratio,
+        height)`, where the aspect ratio is `width / height`.
         """
-        бокс формата (x,y,w,h) преоборазовывается в формат
-        (x_center, y_center, a, h)
-        Где a это соотнощение ширины и длины
-        """
-        temp = self.box_coord.copy()
+        temp = self.tlwh.copy()
         temp[:2] += temp[2:] / 2
         temp[2] /= temp[3]
         return temp

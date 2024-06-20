@@ -1,0 +1,8 @@
+names:
+- helmet
+- head
+- person
+nc: 3
+val: C:/Users/amtal/computer_vision/images/test
+train: C:/Users/amtal/computer_vision/images/train
+

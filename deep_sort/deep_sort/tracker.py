@@ -9,31 +9,31 @@ from .track import Track
 
 class Tracker:
     """
-    This is the multi-target tracker.
+    Это многоцелевой трекер.
 
-    Parameters
+    Параметры
     ----------
-    metric : nn_matching.NearestNeighborDistanceMetric
-        A distance metric for measurement-to-track association.
-    max_age : int
-        Maximum number of missed misses before a track is deleted.
-    n_init : int
-        Number of consecutive detections before the track is confirmed. The
-        track state is set to `Deleted` if a miss occurs within the first
-        `n_init` frames.
+    метрика : nn_matching.Метрика расстояния до ближайшего соседа
+        Метрика расстояния для привязки измерения к треку.
+    max_age :
+Максимальное количество пропущенных пропусков перед удалением трека.
+    n_init :
+число последовательных обнаружений до подтверждения трека. Состояние
+трека устанавливается на "Удалено", если в течение первых кадров происходит пропуск
+        n_init.
 
-    Attributes
+    Атрибуты
     ----------
-    metric : nn_matching.NearestNeighborDistanceMetric
-        The distance metric used for measurement to track association.
-    max_age : int
-        Maximum number of missed misses before a track is deleted.
-    n_init : int
-        Number of frames that a track remains in initialization phase.
-    kf : kalman_filter.KalmanFilter
-        A Kalman filter to filter target trajectories in image space.
-    tracks : List[Track]
-        The list of active tracks at the current time step.
+    метрика : nn_матчинг.Метрика расстояния до ближайшего соседа
+        Показатель расстояния, используемый для измерения связи треков.
+    max_age :
+максимальное количество пропущенных кадров перед удалением трека.
+    n_init :
+количество кадров, в течение которых трек остается на этапе инициализации.
+    kf : kalman_filter.Фильтр Калмана
+        Фильтр Калмана для фильтрации целевых траекторий в пространстве изображения.
+    дорожки : Список[Track]
+        Список активных дорожек на текущем временном шаге.
 
     """
 
@@ -48,20 +48,20 @@ class Tracker:
         self._next_id = 1
 
     def predict(self):
-        """Propagate track state distributions one time step forward.
+        """Распространяйте распределение состояний отслеживания на один временной шаг вперед.
 
-        This function should be called once every time step, before `update`.
+        Эта функция должна вызываться один раз на каждом временном шаге перед `обновлением`.
         """
         for track in self.tracks:
             track.predict(self.kf)
 
     def update(self, detections):
-        """Perform measurement update and track management.
+        """Выполняйте обновление измерений и управление отслеживанием.
 
-        Parameters
+        Параметры
         ----------
-        detections : List[deep_sort.detection.Detection]
-            A list of detections at the current time step.
+        обнаружения : Список[deep_sort.detection.Обнаружение]
+            Список обнаружений на текущем временном шаге.
 
         """
         # Run matching cascade.
@@ -102,19 +102,19 @@ class Tracker:
 
             return cost_matrix
 
-        # Split track set into confirmed and unconfirmed tracks.
+      # Разделите набор дорожек на подтвержденные и неподтвержденные.
         confirmed_tracks = [
             i for i, t in enumerate(self.tracks) if t.is_confirmed()]
         unconfirmed_tracks = [
             i for i, t in enumerate(self.tracks) if not t.is_confirmed()]
 
-        # Associate confirmed tracks using appearance features.
+        # Сопоставьте подтвержденные треки, используя функции внешнего вида.
         matches_a, unmatched_tracks_a, unmatched_detections = \
             linear_assignment.matching_cascade(
                 gated_metric, self.metric.matching_threshold, self.max_age,
                 self.tracks, detections, confirmed_tracks)
 
-        # Associate remaining tracks together with unconfirmed tracks using IOU.
+      # Свяжите оставшиеся треки с неподтвержденными треками, используя долговую расписку.
         iou_track_candidates = unconfirmed_tracks + [
             k for k in unmatched_tracks_a if
             self.tracks[k].time_since_update == 1]

@@ -3,20 +3,20 @@ import numpy as np
 
 
 def _pdist(a, b):
-    """Compute pair-wise squared distance between points in `a` and `b`.
+    """Вычислите попарно квадрат расстояния между точками `а` и `в`.
 
-    Parameters
+    Параметры
     ----------
     a : array_like
-        An NxM matrix of N samples of dimensionality M.
+        Матрица NxM из N выборок размерности M.
     b : array_like
-        An LxM matrix of L samples of dimensionality M.
+        Матрица LxM из L выборок размерности M.
 
-    Returns
+    Возвращается
     -------
     ndarray
-        Returns a matrix of size len(a), len(b) such that eleement (i, j)
-        contains the squared distance between `a[i]` and `b[j]`.
+        Возвращает матрицу размера len(a), len(b), такую, что элемент (i, j)
+        содержит квадрат расстояния между `a[i]` и `b[j]`.
 
     """
     a, b = np.asarray(a), np.asarray(b)
@@ -29,24 +29,23 @@ def _pdist(a, b):
 
 
 def _cosine_distance(a, b, data_is_normalized=False):
-    """Compute pair-wise cosine distance between points in `a` and `b`.
+    """Вычислите попарное косинусное расстояние между точками `a` и `b`.
 
-    Parameters
+    Параметры
     ----------
     a : array_like
-        An NxM matrix of N samples of dimensionality M.
+        Матрица NxM из N выборок размерности M.
     b : array_like
-        An LxM matrix of L samples of dimensionality M.
-    data_is_normalized : Optional[bool]
-        If True, assumes rows in a and b are unit length vectors.
-        Otherwise, a and b are explicitly normalized to lenght 1.
+        Матрица LxM из L выборок размерности M.
+    data_is_normalized : Необязательно[bool]
+        Если значение равно True, предполагается, что строки в a и b являются векторами единичной длины.
+        В противном случае a и b явно нормализованы к длине 1.
 
-    Returns
+    Возвращается
     -------
     ndarray
-        Returns a matrix of size len(a), len(b) such that eleement (i, j)
-        contains the squared distance between `a[i]` and `b[j]`.
-
+        Возвращает матрицу размера len(a), len(b), такой, что элемент (i, j)
+        содержит квадрат расстояния между `a[i]` и `b[j]`.
     """
     if not data_is_normalized:
         a = np.asarray(a) / np.linalg.norm(a, axis=1, keepdims=True)
@@ -55,20 +54,20 @@ def _cosine_distance(a, b, data_is_normalized=False):
 
 
 def _nn_euclidean_distance(x, y):
-    """ Helper function for nearest neighbor distance metric (Euclidean).
+    """ Вспомогательная функция для измерения расстояния до ближайшего соседа (евклидова).
 
-    Parameters
+    Параметры
     ----------
     x : ndarray
-        A matrix of N row-vectors (sample points).
+        Матрица из N векторов-строк (точек выборки).
     y : ndarray
-        A matrix of M row-vectors (query points).
+        Матрица из M векторов-строк (точек запроса).
 
-    Returns
+    Возвращается
     -------
-    ndarray
-        A vector of length M that contains for each entry in `y` the
-        smallest Euclidean distance to a sample in `x`.
+    ndarray выделить
+        Вектор длиной M, содержащий для каждой записи в "y"
+наименьшее евклидово расстояние до выборки в `x`.
 
     """
     distances = _pdist(x, y)
@@ -76,20 +75,20 @@ def _nn_euclidean_distance(x, y):
 
 
 def _nn_cosine_distance(x, y):
-    """ Helper function for nearest neighbor distance metric (cosine).
+    """ Вспомогательная функция для определения расстояния до ближайшего соседа (косинус).
 
-    Parameters
+    Параметры
     ----------
     x : ndarray
-        A matrix of N row-vectors (sample points).
+        Матрица из N векторов-строк (точек выборки).
     y : ndarray
-        A matrix of M row-vectors (query points).
+        Матрица из M векторов-строк (точек запроса).
 
-    Returns
+    Возвращается
     -------
-    ndarray
-        A vector of length M that contains for each entry in `y` the
-        smallest cosine distance to a sample in `x`.
+    ndarray выделить
+        Вектор длиной M, содержащий для каждой записи в "y"
+наименьшее косинусное расстояние до выборки в `x`.
 
     """
     distances = _cosine_distance(x, y)
@@ -98,25 +97,25 @@ def _nn_cosine_distance(x, y):
 
 class NearestNeighborDistanceMetric(object):
     """
-    A nearest neighbor distance metric that, for each target, returns
-    the closest distance to any sample that has been observed so far.
+    Показатель расстояния до ближайшего соседа, который для каждой цели возвращает значение
+    ближайшего расстояния до любого образца, которое наблюдалось на данный момент.
 
-    Parameters
+    Параметры
     ----------
-    metric : str
-        Either "euclidean" or "cosine".
-    matching_threshold: float
-        The matching threshold. Samples with larger distance are considered an
-        invalid match.
-    budget : Optional[int]
-        If not None, fix samples per class to at most this number. Removes
-        the oldest samples when the budget is reached.
+    метрика : структура
+        Либо "евклидова", либо "косинусоидальная".
+    matching_threshold: значение с плавающей точкой
+        Порог соответствия. Образцы с большего расстояния считаются
+ неверный матч.
+    бюджет : опционально[инт]
+        Если нет ни у кого, зафиксировать образцы в классе, чтобы на это самое количество. Удаляет
+        древнейшие образцы, когда бюджет достиг.
 
-    Attributes
+    Атрибуты
     ----------
-    samples : Dict[int -> List[ndarray]]
-        A dictionary that maps from target identities to the list of samples
-        that have been observed so far.
+    примеры : Dict[int -> List[ndarray]]
+        Словарь, который сопоставляет целевые идентификаторы со списком образцов
+        , которые были просмотрены до сих пор.
 
     """
 
@@ -135,17 +134,16 @@ class NearestNeighborDistanceMetric(object):
         self.samples = {}
 
     def partial_fit(self, features, targets, active_targets):
-        """Update the distance metric with new data.
+        """Обновите метрику расстояния новыми данными.
 
-        Parameters
+        Параметры
         ----------
-        features : ndarray
-            An NxM matrix of N features of dimensionality M.
-        targets : ndarray
-            An integer array of associated target identities.
-        active_targets : List[int]
-            A list of targets that are currently present in the scene.
-
+        характеристики : ndarray
+            Матрица NxM из N объектов размерности M.
+        цели : ndarray
+            Целочисленный массив связанных идентификаторов целей.
+        active_targets : Список[int]
+            Список целей, которые в данный момент присутствуют на месте происшествия.
         """
         for feature, target in zip(features, targets):
             self.samples.setdefault(target, []).append(feature)
@@ -154,21 +152,21 @@ class NearestNeighborDistanceMetric(object):
         self.samples = {k: self.samples[k] for k in active_targets}
 
     def distance(self, features, targets):
-        """Compute distance between features and targets.
+        """Вычислите расстояние между объектами и целями.
 
-        Parameters
+        Параметры
         ----------
         features : ndarray
-            An NxM matrix of N features of dimensionality M.
-        targets : List[int]
-            A list of targets to match the given `features` against.
+            Матрица NxM из N объектов размерности M.
+        цели : Список[int]
+            Список целей, с которыми необходимо сопоставить заданные `функции`.
 
-        Returns
+        Возвращается
         -------
-        ndarray
-            Returns a cost matrix of shape len(targets), len(features), where
-            element (i, j) contains the closest squared distance between
-            `targets[i]` and `features[j]`.
+        ndarray выделить
+            Возвращает матрицу затрат формы len(цели), len(объекты), где
+            элемент (i, j) содержит ближайший квадрат расстояния между
+            `целями[i]` и `объектами[j]`.
 
         """
         cost_matrix = np.zeros((len(targets), len(features)))

@@ -11,37 +11,37 @@ INFTY_COST = 1e+5
 def min_cost_matching(
         distance_metric, max_distance, tracks, detections, track_indices=None,
         detection_indices=None):
-    """Solve linear assignment problem.
+    """Решите задачу линейного назначения.
 
-    Parameters
+    Параметры
     ----------
-    distance_metric : Callable[List[Track], List[Detection], List[int], List[int]) -> ndarray
-        The distance metric is given a list of tracks and detections as well as
-        a list of N track indices and M detection indices. The metric should
-        return the NxM dimensional cost matrix, where element (i, j) is the
-        association cost between the i-th track in the given track indices and
-        the j-th detection in the given detection_indices.
-    max_distance : float
-        Gating threshold. Associations with cost larger than this value are
-        disregarded.
-    tracks : List[track.Track]
-        A list of predicted tracks at the current time step.
-    detections : List[detection.Detection]
-        A list of detections at the current time step.
-    track_indices : List[int]
-        List of track indices that maps rows in `cost_matrix` to tracks in
-        `tracks` (see description above).
-    detection_indices : List[int]
-        List of detection indices that maps columns in `cost_matrix` to
-        detections in `detections` (see description above).
+    distance_metric : Вызываемый[Список[дорожек], Список[обнаружений], Список[int], Список[int]) -> ndarray
+        Метрика расстояния содержит список дорожек и обнаружений, а также
+        список из N индексов отслеживания и M индексов обнаружения. Показатель должен
+        возвращает размерную матрицу затрат NxM, где элемент (i, j) представляет
+собой стоимость связи между i-м треком в заданных индексах трека и
+j-м обнаружением в заданных индексах обнаружения.
+    max_distance : значение с плавающей точкой
+        Порог стробирования. Связи со стоимостью, превышающей это значение
+, не учитываются.
+    дорожки : Список[дорожка.Дорожка]
+        Список прогнозируемых дорожек на текущем временном шаге.
+    обнаружения : Список[обнаружение.Обнаружение]
+        Список обнаружений на текущем временном шаге.
+    track_indices : Список[int]
+        Список индексов дорожек, которые сопоставляют строки в `cost_matrix` с дорожками в
+`tracks` (см. описание выше).
+    detection_indices : список[int]
+        Список индексов обнаружения, которые сопоставляют столбцы в `cost_matrix` с
+обнаружениями в `detections` (см. описание выше).
 
-    Returns
+    Возвращается
     -------
     (List[(int, int)], List[int], List[int])
-        Returns a tuple with the following three entries:
-        * A list of matched track and detection indices.
-        * A list of unmatched track indices.
-        * A list of unmatched detection indices.
+        Возвращает кортеж со следующими тремя элементами:
+        * Список совпадающих индексов трека и обнаружения.
+        * Список несовпадающих индексов трека.
+        * Список непревзойденных показателей обнаружения.
 
     """
     if track_indices is None:
@@ -80,40 +80,40 @@ def min_cost_matching(
 def matching_cascade(
         distance_metric, max_distance, cascade_depth, tracks, detections,
         track_indices=None, detection_indices=None):
-    """Run matching cascade.
+    """Запустите соответствующий каскад.
 
-    Parameters
+    Параметры
     ----------
-    distance_metric : Callable[List[Track], List[Detection], List[int], List[int]) -> ndarray
-        The distance metric is given a list of tracks and detections as well as
-        a list of N track indices and M detection indices. The metric should
-        return the NxM dimensional cost matrix, where element (i, j) is the
-        association cost between the i-th track in the given track indices and
-        the j-th detection in the given detection indices.
-    max_distance : float
-        Gating threshold. Associations with cost larger than this value are
-        disregarded.
-    cascade_depth: int
-        The cascade depth, should be se to the maximum track age.
-    tracks : List[track.Track]
-        A list of predicted tracks at the current time step.
-    detections : List[detection.Detection]
-        A list of detections at the current time step.
-    track_indices : Optional[List[int]]
-        List of track indices that maps rows in `cost_matrix` to tracks in
-        `tracks` (see description above). Defaults to all tracks.
-    detection_indices : Optional[List[int]]
-        List of detection indices that maps columns in `cost_matrix` to
-        detections in `detections` (see description above). Defaults to all
-        detections.
+    distance_metric : Вызываемый[Список[дорожек], Список[обнаружений], Список[int], Список[int]) -> ndarray
+        Метрика расстояния содержит список дорожек и обнаружений, а также
+        список из N индексов треков и M индексов обнаружения. Метрика должна
+        возвращать размерную матрицу затрат NxM, где элемент (i, j) представляет
+собой стоимость связи между i-м треком в заданных индексах треков и
+j-м обнаружением в заданных индексах обнаружения.
+    максимальное расстояние : плавающее значение
+        Порог стробирования. Связи со стоимостью, превышающей это значение
+, не учитываются.
+    cascade_depth:
+указывает глубину каскада, которая должна соответствовать максимальному возрасту трека.
+    треки : Список[трек.Трек]
+        Список прогнозируемых дорожек на текущем временном шаге.
+    обнаружения : Список[обнаружение.Detection]
+        Список обнаружений на текущем временном шаге.
+    track_indices : Необязательный[Список[int]]
+        Список индексов дорожек, который сопоставляет строки в `cost_matrix` с дорожками в
+`tracks` (см. описание выше). По умолчанию используется для всех дорожек.
+    detection_indices : Необязательный[Список[int]]
+        Список индексов обнаружения, который сопоставляет столбцы в `cost_matrix` с
+обнаружениями в `detections` (см. описание выше). По умолчанию используется значение all
+        обнаружения.
 
-    Returns
+    Возвращается
     -------
     (List[(int, int)], List[int], List[int])
-        Returns a tuple with the following three entries:
-        * A list of matched track and detection indices.
-        * A list of unmatched track indices.
-        * A list of unmatched detection indices.
+        Возвращает кортеж со следующими тремя элементами:
+        * Список совпадающих индексов трека и обнаружения.
+        * Список несовпадающих индексов трека.
+        * Список несовпадающих индексов обнаружения.
 
     """
     if track_indices is None:
@@ -146,39 +146,38 @@ def matching_cascade(
 def gate_cost_matrix(
         kf, cost_matrix, tracks, detections, track_indices, detection_indices,
         gated_cost=INFTY_COST, only_position=False):
-    """Invalidate infeasible entries in cost matrix based on the state
-    distributions obtained by Kalman filtering.
+    """Отмените недопустимые записи в матрице затрат на основе
+распределений состояний, полученных с помощью фильтрации Калмана.
 
-    Parameters
+    Параметры
     ----------
-    kf : The Kalman filter.
+    kf : Фильтр Калмана.
     cost_matrix : ndarray
-        The NxM dimensional cost matrix, where N is the number of track indices
-        and M is the number of detection indices, such that entry (i, j) is the
-        association cost between `tracks[track_indices[i]]` and
-        `detections[detection_indices[j]]`.
-    tracks : List[track.Track]
-        A list of predicted tracks at the current time step.
-    detections : List[detection.Detection]
-        A list of detections at the current time step.
-    track_indices : List[int]
-        List of track indices that maps rows in `cost_matrix` to tracks in
-        `tracks` (see description above).
-    detection_indices : List[int]
-        List of detection indices that maps columns in `cost_matrix` to
-        detections in `detections` (see description above).
-    gated_cost : Optional[float]
-        Entries in the cost matrix corresponding to infeasible associations are
-        set this value. Defaults to a very large value.
-    only_position : Optional[bool]
-        If True, only the x, y position of the state distribution is considered
-        during gating. Defaults to False.
+        Размерная матрица затрат NxM, где N - количество индексов отслеживания
+        а M - это количество индексов обнаружения, так что запись (i, j) - это стоимость
+связи между "треками[track_indices[i]]" и
+"обнаружениями[detection_indices[j]]".
+    треки : Список[трек.Трек]
+        Список прогнозируемых дорожек на текущем временном шаге.
+    обнаружения : Список[обнаружение.Обнаружение]
+        Список обнаружений на текущем временном шаге.
+    track_indices : Список[int]
+        Список индексов дорожек, которые сопоставляют строки в `cost_matrix` с дорожками в
+`tracks` (см. описание выше).
+    detection_indices : список[int]
+        Список индексов обнаружения, которые сопоставляют столбцы в `cost_matrix` с
+обнаружениями в `detections` (см. описание выше).
+    gated_cost : Необязательно[с плавающей точкой]
+        Это значение задается для записей в матрице затрат, соответствующих недопустимым связям
+. По умолчанию используется очень большое значение.
+    only_position : Необязательно[bool]
+        Если значение True, то учитывается только положение x, y в распределении состояний
+        во время стробирования. По умолчанию используется значение False.
 
-    Returns
+    Возвращается
     -------
     ndarray
-        Returns the modified cost matrix.
-
+        Возвращает измененную матрицу затрат.
     """
     gating_dim = 2 if only_position else 4
     gating_threshold = kalman_filter.chi2inv95[gating_dim]
